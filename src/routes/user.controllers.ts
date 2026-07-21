@@ -1,9 +1,18 @@
 import {Request, Response} from 'express'
+export {User} from '../models/user.model'
 
-async function userController(req: Request,res: Response){
-    // extend from base / insert functionality
-    // make sure structure defined by interface/model
-    console.log(req)
+
+export async function createUser(req: Request,res: Response){
+    
+}
+export async function logIn(req: Request,res: Response){
+    
 }
 
-export default userController
+export async function forgotPassword(req: Request,res: Response){
+    
+}
+
+export async function verifyEmail(req: Request,res: Response){
+    
+}
