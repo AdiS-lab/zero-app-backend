@@ -4,8 +4,7 @@ import router from './app.router';
 
 const app = express();
 
-const adi = 'hello';
-const phil = 'world';
+const unused = 'HELLO WORLD';
 
 // middlwares
 app.use(express.json());
