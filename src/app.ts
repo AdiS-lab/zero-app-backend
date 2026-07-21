@@ -1,12 +1,18 @@
 import express from "express";
-const app = express();
-import router from './core/router'
 
+import router from "./app.router";
+
+const app = express();
+
+// middlwares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// routes
+app.use(router);
 
 app.get("/ping", function (req, res) {
   res.send("pong");
 });
-
-app.use('/api', router)
 
 export default app;
