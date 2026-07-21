@@ -10,4 +10,6 @@ const authSchema = new Schema<IAuth>({
   refreshToken: String,
 });
 
-export const Auth = model<IAuth>('Auth', authSchema);
+const Auth = model<IAuth>('Auth', authSchema);
+
+export default Auth;

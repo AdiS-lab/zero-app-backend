@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import MODELS from '../constants/MODELS';
 
 interface IUser {
   email: string;
@@ -26,6 +27,6 @@ userSchema.pre('save', function () {
   // pass through hashing functin like sha256 or bcrypt
 });
 
-const User = model<IUser>('User', userSchema);
+const User = model<IUser>(MODELS.USER, userSchema);
 
 export default User;

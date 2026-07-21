@@ -1,5 +1,7 @@
 import { Schema, model, Types } from 'mongoose';
 
+import MODELS from '../constants/MODELS';
+
 interface IChat {
   userId: Types.ObjectId;
   chatroomId: Types.ObjectId;
@@ -7,7 +9,7 @@ interface IChat {
 }
 
 const chatSchema = new Schema<IChat>({
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
+  userId: { type: Schema.Types.ObjectId, ref: MODELS.USER },
   chatroomId: { type: Schema.Types.ObjectId, ref: 'Chatroom' },
   messages: { type: [String] },
 });
