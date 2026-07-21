@@ -1,15 +1,31 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 interface IUser {
   email: string;
   password: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
 }
 
-const userSchema = new Schema<IUser>({
-  email: String,
-  password: String,
+const userSchema = new Schema<IUser>(
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    deletedAt: { type: Date, default: null },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+userSchema.pre('save', function () {
+  if (!this.isModified('password')) return;
+
+  this.password = 'SA' + this.password + 'LT';
+  // pass through hashing functin like sha256 or bcrypt
 });
 
-const User = model<IUser>("User", userSchema);
+const User = model<IUser>('User', userSchema);
 
 export default User;
