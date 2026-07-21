@@ -1,13 +1,13 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types } from 'mongoose';
 
 interface IAuth {
   userId: Types.ObjectId;
-  refreshToken: String;
+  refreshToken: string;
 }
 
 const authSchema = new Schema<IAuth>({
-  userId: { type: Schema.Types.ObjectId, ref: "User" },
+  userId: { type: Schema.Types.ObjectId, ref: 'User' },
   refreshToken: String,
 });
 
-export const Auth = model<IAuth>("Auth", authSchema);
+export const Auth = model<IAuth>('Auth', authSchema);
