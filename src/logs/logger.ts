@@ -1,8 +1,27 @@
-const logger = {
-  debug: (...args: any[]) => console.log("[DEBUG]", ...args),
-  info: (...args: any[]) => console.log("[INFO]", ...args),
-  warn: (...args: any[]) => console.warn("[WARN]", ...args),
-  error: (...args: any[]) => console.error("[ERROR]", ...args),
+import winston from 'winston'
+
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  debug: 3
 };
+
+const logger = winston.createLogger({
+  level: process.env.APP_MODE === 'production' ? 'warn' : 'debug', 
+  levels,
+  transports: [
+  // Console transport
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.printf((info) => `[${info.level}]: ${info.message}`),
+    ),
+    handleExceptions: true,
+    handleRejections: true,
+    }),
+  ],
+  exitOnError: false
+});
 
 export default logger;
