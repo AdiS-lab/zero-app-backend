@@ -2,18 +2,20 @@ import { Router } from "express";
 
 import { usersController } from "../../../controllers";
 
+import {authMiddleware} from '../../../middleware/validateToken'
+
 const router = Router();
 
 router
   .route("/")
   .get(usersController.list.bind(usersController))
-  .post(usersController.create.bind(usersController));
+  .post(authMiddleware, usersController.create.bind(usersController));
 
 router
   .route("/:_id")
   .get(usersController.getById.bind(usersController))
-  .put(usersController.update.bind(usersController))
-  .delete(usersController.delete.bind(usersController));
+  .put(authMiddleware, usersController.update.bind(usersController))
+  .delete(authMiddleware, usersController.delete.bind(usersController));
 
 export default router;
 
