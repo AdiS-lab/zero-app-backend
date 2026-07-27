@@ -1,4 +1,4 @@
-import {validateAccessToken, validateRefreshToken} from '../utils/jwt.utils'
+import {validateAccessToken} from '../utils/jwt.utils'
 import type {Request, Response} from 'express'
 
 export const authMiddleware = async(req: Request, res: Response, next: () => void) =>{
@@ -8,7 +8,7 @@ export const authMiddleware = async(req: Request, res: Response, next: () => voi
         const {id} = await validateAccessToken(accessToken) as {id: string}
         req.id = id
         next()
-    }catch(error){
-        return res.status(401).json({message: "Invalid access token"})
+    }catch(error: any){
+        return res.status(401).json({e: error.message, message: "Invalid access token"})
     }
 }

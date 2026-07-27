@@ -34,15 +34,15 @@ class AuthController extends BaseController {
       });
       return res.status(200).json({message: "User successfully created"})
     }
-    catch(error){
-      return res.status(500).json({message: "Unsuccessful creation"})
+    catch(error: any){
+      return res.status(500).json({e: error.message, message: "Unsuccessful creation"})
     }  
   }
 
   async logout(req: Request, res: Response) {
     const id = req.id
     await User.findByIdAndUpdate(id, { refreshToken: null });
-    return res.status(200).json({ message: "Logged out" });
+    return res.status(200).json({message: "Logged out"});
   }
 
   async refresh(req: Request, res: Response) {
@@ -53,8 +53,8 @@ class AuthController extends BaseController {
       const {refreshToken, accessToken} = await createTokens(id, email)
       await Auth.findByIdAndUpdate(id, { refreshToken });
       return {refreshToken, accessToken}
-    }catch(error){
-        return res.status(400).json({message: "Rehydration has a problem"})
+    }catch(error: any){
+        return res.status(400).json({e: error.message, message: "Rehydration has a problem"})
     }
   }
   async forgotPassword(req: Request, res: Response) {

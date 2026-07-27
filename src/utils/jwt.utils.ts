@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken'
 import config from '../config/config'
 
-async function createAccessToken(id: string, email: string){
-    const accessToken = jwt.sign({id, email}, config.accessTokenSecret, {expiresIn: '15m'})
-    return accessToken
-}
+// async function createAccessToken(id: string, email: string){
+//     const accessToken = jwt.sign({id, email}, config.accessTokenSecret, {expiresIn: '15m'})
+//     return accessToken
+// }
 
-async function createRefreshToken(id: string, email: string){
-    const refreshToken = jwt.sign({id, email}, config.refreshTokenSecret, {expiresIn: '2d'})
-    return refreshToken
-}
+// async function createRefreshToken(id: string, email: string){
+//     const refreshToken = jwt.sign({id, email}, config.refreshTokenSecret, {expiresIn: '2d'})
+//     return refreshToken
+// }
 
 async function createTokens(id: string, email: string){
     const accessToken = jwt.sign({id, email}, config.accessTokenSecret, {expiresIn: '15m'})
@@ -33,4 +33,4 @@ async function validateRefreshToken (refreshToken: string){
     return payload
 }
 
-export {createAccessToken, createRefreshToken, createTokens, validateAccessToken, validateRefreshToken}
+export {createTokens, validateAccessToken, validateRefreshToken}

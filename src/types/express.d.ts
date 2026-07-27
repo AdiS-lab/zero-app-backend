@@ -1,6 +1,5 @@
-src/types/express.d.ts
-  declare namespace Express {
-    interface Request {
-      id?: string;
-    }
+declare namespace Express {
+  interface Request {
+    id?: string;
   }
+}
