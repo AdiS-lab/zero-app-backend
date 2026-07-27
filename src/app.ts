@@ -6,7 +6,20 @@ import logger from './logs/logger';
 
 import morgan from 'morgan';
 
+import cors from 'cors';
+
 const app = express();
+
+// middlwares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}))
+
+// routes
+app.use(router);
 
 app.use(morgan(
   (tokens, req, res) => {
@@ -19,13 +32,6 @@ app.use(morgan(
     });
   }
 ));
-
-// middlwares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// routes
-app.use(router);
 
 app.get('/ping', function (req, res) {
   res.send('pong');

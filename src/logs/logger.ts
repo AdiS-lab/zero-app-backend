@@ -11,7 +11,7 @@ const logger = winston.createLogger({
   level: process.env.APP_MODE === 'production' ? 'warn' : 'debug', 
   levels,
   transports: [
-  // Console transport
+
   new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
