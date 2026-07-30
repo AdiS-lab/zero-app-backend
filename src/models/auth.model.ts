@@ -1,14 +1,21 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
-interface IAuth {
+interface IAuth extends Document {
   userId: Types.ObjectId;
   refreshToken: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const authSchema = new Schema<IAuth>({
-  userId: { type: Schema.Types.ObjectId, ref: 'User' },
-  refreshToken: String,
-});
+const authSchema = new Schema<IAuth>(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    refreshToken: String,
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Auth = model<IAuth>('Auth', authSchema);
 
