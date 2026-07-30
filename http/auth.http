@@ -1,0 +1,27 @@
+@baseUrl=http://localhost:8000/api/v1/auth
+
+### signup
+POST {{baseUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "test1@test.test",
+  "password": "password"
+}
+
+### login
+# @name login
+POST {{baseUrl}}/login
+Content-Type: application/json 
+
+{
+  "email": "test@test.test",
+  "password": "password"
+}
+
+###
+@accessToken={{login.response.body.accessToken}}
+
+### me
+GET {{baseUrl}}/me
+Authorization: Bearer {{accessToken}} 

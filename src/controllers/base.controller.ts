@@ -1,23 +1,51 @@
 import type { Model } from 'mongoose';
 import type { Request, Response } from 'express';
+import argon2 from 'argon2';
+import _ from 'lodash';
 
 import logger from '../logs/logger';
+import jwtUtils from '../utils/jwt.utils';
+import appRegistry from '../app.registry';
+import appBroker from '../app.broker';
 
 class BaseController {
   model: Model<any>;
   logger: typeof logger;
+  jwt: typeof jwtUtils;
+  registry: typeof appRegistry;
+  hashStrategy: {
+    hash: typeof argon2.hash;
+    verify: typeof argon2.verify;
+  };
+  _: typeof _;
+  broker: typeof appBroker;
+  listeners?(): void;
 
   constructor(model: Model<any>) {
     this.model = model;
     this.logger = logger;
+    this.jwt = jwtUtils;
+    this.registry = appRegistry;
+    this.hashStrategy = {
+      hash: argon2.hash,
+      verify: argon2.verify,
+    };
+    this._ = _;
+    this.broker = appBroker;
+
+    if (typeof this.listeners === 'function') this.listeners();
   }
 
   async create(req: Request, res: Response) {
     try {
+      if ('meta' in req && req.meta?.user) {
+        req.body.userId = req.meta.user._id;
+      }
+
       const body = req.body;
       const newDoc = new this.model(body);
       const savedDoc = await newDoc.save();
-      res.status(201).json({
+      return res.status(201).json({
         message: 'Document created successfully',
         data: savedDoc,
       });

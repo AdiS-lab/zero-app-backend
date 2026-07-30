@@ -1,17 +1,38 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
 import MODELS from '../constants/MODELS';
 
-interface IChat {
-  userId: Types.ObjectId;
+type MediaType = 'image' | 'video' | 'audio' | 'file';
+
+interface IMessage {
+  chatter: Types.ObjectId;
+  content: string;
+  media?: {
+    mediaUrls: string[];
+    mediaType: MediaType;
+  };
+  timestamp: Date;
+}
+
+const messageSchema = new Schema<IMessage>({
+  chatter: { type: Schema.Types.ObjectId, ref: MODELS.USER },
+  content: { type: String },
+  media: {
+    mediaUrls: [String],
+    mediaType: { type: String, enum: ['image', 'video', 'audio', 'file'] },
+  },
+  timestamp: { type: Date, default: Date.now },
+});
+
+interface IChat extends Document {
+  // userId: Types.ObjectId;
   chatroomId: Types.ObjectId;
-  messages: Array<string>;
+  messages: (typeof messageSchema)[];
 }
 
 const chatSchema = new Schema<IChat>({
-  userId: { type: Schema.Types.ObjectId, ref: MODELS.USER },
   chatroomId: { type: Schema.Types.ObjectId, ref: 'Chatroom' },
-  messages: { type: [String] },
+  messages: { type: [messageSchema], default: [] },
 });
 
 const Chat = model<IChat>('Chat', chatSchema);

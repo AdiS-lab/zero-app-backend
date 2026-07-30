@@ -2,20 +2,23 @@ import { Router } from 'express';
 
 import { usersController } from '../../../controllers';
 
-import { authMiddleware } from '../../../middleware/validateToken';
+import validateTokenMiddleware from '../../../middleware/validate-token.middleware';
 
 const router = Router();
 
 router
   .route('/')
   .get(usersController.list.bind(usersController))
-  .post(authMiddleware, usersController.create.bind(usersController));
+  .post(validateTokenMiddleware, usersController.create.bind(usersController));
 
 router
   .route('/:_id')
   .get(usersController.getById.bind(usersController))
-  .put(authMiddleware, usersController.update.bind(usersController))
-  .delete(authMiddleware, usersController.delete.bind(usersController));
+  .put(validateTokenMiddleware, usersController.update.bind(usersController))
+  .delete(
+    validateTokenMiddleware,
+    usersController.delete.bind(usersController)
+  );
 
 export default router;
 

@@ -9,15 +9,29 @@ const levels = {
 
 const logger = winston.createLogger({
   level: process.env.APP_MODE === 'production' ? 'warn' : 'debug',
+  format: winston.format.combine(
+    winston.format.timestamp(), // Add timestamp to logs
+    winston.format.json() // Use JSON format for structured logger
+  ),
   levels,
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.printf((info) => `[${info.level}]: ${info.message}`)
+        winston.format.printf((info) => `[${info.level}]: ${info.message}`),
+        winston.format.simple()
       ),
       handleExceptions: true,
       handleRejections: true,
+    }),
+
+    new winston.transports.File({
+      filename: 'src/logs/error.log',
+      level: 'error',
+    }),
+
+    new winston.transports.File({
+      filename: 'src/logs/combined.log',
     }),
   ],
   exitOnError: false,
