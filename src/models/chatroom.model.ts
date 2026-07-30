@@ -1,13 +1,27 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
-interface IChat {
-  user1: Types.ObjectId;
-  user2: Types.ObjectId;
+interface IChatroom extends Document {
+  chatter: Types.ObjectId;
+  chattee: Types.ObjectId;
+  participants: Types.ObjectId[];
 }
 
-const chatSchema = new Schema<IChat>({
-  user1: { type: Schema.Types.ObjectId, ref: 'User' },
-  user2: { type: Schema.Types.ObjectId, ref: 'User' },
+const chatroomSchema = new Schema<IChatroom>(
+  {
+    chatter: { type: Schema.Types.ObjectId, ref: 'User' },
+    chattee: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    participants: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+chatroomSchema.pre('save', async function () {
+  // if (!this.isModified('participants')) return;
+  this.participants = [this.chatter, this.chattee];
 });
 
-export const Chat = model<IChat>('Chat', chatSchema);
+const Chatroom = model<IChatroom>('Chatroom', chatroomSchema);
+
+export default Chatroom;

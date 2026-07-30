@@ -41,7 +41,7 @@ dbConnection(config.mongoUri)
     });
 
     server.listen(config.port, function () {
-      logger.info('Server is running on port:', config.port);
+      logger.info('Server is running on port: ', config.port, 'hello world');
     });
 
     server.on('SIGINT', () => {

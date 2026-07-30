@@ -1,0 +1,23 @@
+@loginUrl=http://localhost:8000/api/v1/auth/login
+
+### get access token
+# @name login
+POST {{loginUrl}}
+Content-Type: application/json
+
+{
+  "email": "test@test.test",
+  "password": "password"
+}
+
+###
+@accessToken={{login.response.body.accessToken}}
+
+
+@baseUrl=http://localhost:8000/api/v1/chats
+
+
+## create 
+
+### get chats
+GET {{baseUrl}}

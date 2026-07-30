@@ -1,0 +1,10 @@
+@baseUrl=http://localhost:8000/api/v1/chatrooms
+
+### crate chatroom
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "chatter": "6a6abbb398219783e4d8115d",
+  "chattee": "6a6ac342f072e37992d940b0"
+}
