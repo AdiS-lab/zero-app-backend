@@ -29,9 +29,15 @@ export default [
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'warn',
       'no-debugger': 'warn',
-      'prettier/prettier': 'warn',
+      // 'prettier/prettier': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
+      'prettier/prettier': [
+        'error',
+        {
+          endOfLine: 'auto',
+        },
+      ],
     },
   },
   {

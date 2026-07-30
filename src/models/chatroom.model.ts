@@ -1,4 +1,4 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types } from 'mongoose';
 
 interface IChat {
   user1: Types.ObjectId;
@@ -6,8 +6,8 @@ interface IChat {
 }
 
 const chatSchema = new Schema<IChat>({
-  user1: { type: Schema.Types.ObjectId, ref: "User" },
-  user2: { type: Schema.Types.ObjectId, ref: "User" },
+  user1: { type: Schema.Types.ObjectId, ref: 'User' },
+  user2: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
-export const Chat = model<IChat>("Chat", chatSchema);
+export const Chat = model<IChat>('Chat', chatSchema);

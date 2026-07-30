@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import type { Mongoose } from "mongoose";
+import mongoose from 'mongoose';
+import type { Mongoose } from 'mongoose';
 
-import logger from "../logs/logger";
+import logger from '../logs/logger';
 
 async function dbConnection(uri: string): Promise<Mongoose | null> {
   try {
@@ -11,7 +11,7 @@ async function dbConnection(uri: string): Promise<Mongoose | null> {
     });
     return connection;
   } catch (error) {
-    logger.error("DATABASE CONNECTION: error:", error);
+    logger.error('DATABASE CONNECTION: error:', error);
     return null;
   }
 }

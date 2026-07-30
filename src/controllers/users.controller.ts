@@ -1,5 +1,5 @@
-import BaseController from "./base.controller";
-import { User } from "../models";
+import BaseController from './base.controller';
+import { User } from '../models';
 
 class UsersController extends BaseController {
   constructor() {
