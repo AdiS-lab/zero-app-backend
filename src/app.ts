@@ -37,7 +37,7 @@ app.use(
     {
       stream: {
         write: (message) => {
-          logger.info(message.trim());
+          logger.http(message.trim());
         },
       },
     }
@@ -51,6 +51,6 @@ app.get('/ping', function (req, res) {
   res.send('pong');
 });
 
-logger.info('testing winston');
+logger.info('testing winston respond');
 
 export default app;

@@ -11,6 +11,8 @@ interface IConfig {
   accessTokenTtl: SignOptions['expiresIn'];
   refreshTokenSecret: string;
   refreshTokenTtl: SignOptions['expiresIn'];
+  email: string;
+  password: string;
 }
 
 const config = {
@@ -21,18 +23,8 @@ const config = {
   accessTokenTtl: process.env.ACCESS_TOKEN_TTL || undefined,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
   refreshTokenTtl: process.env.REFRESH_TOKEN_TTL || undefined,
+  email: process.env.EMAIL || '',
+  password: process.env.PASSWORD || '',
 };
 
 export default config as IConfig;
-
-// PORT=8000
-// APP_MODE=DEV # DEV | PROD | STAGING
-
-// DEV_MONGO_URI=mongodb://localhost:27017/adi-zero-project
-// STAGING_MONGO_URI=mongodb://mongo:27017/adi-zero-project
-// PROD_MONGO_URI=<atlas connection string>
-
-// ACCESS_TOKEN_SECRET=REALLY_SECRET
-// ACCESS_TOKEN_TTL=1d
-// REFRESH_TOKEN_SECRET=REALLY_REALLY_SECRET
-// REFRESH_TOKEN_TTL=7d

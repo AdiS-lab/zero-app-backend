@@ -6,10 +6,6 @@ class ChatsController extends BaseController {
     super(Chat);
   }
 
-  // sendMessage() {
-
-  // }
-
   listeners() {
     this.broker.on('chatroom:created', async (chatroomData) => {
       this.logger.info('Chatroom created event received:', chatroomData);

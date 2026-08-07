@@ -7,6 +7,7 @@ import logger from '../logs/logger';
 import jwtUtils from '../utils/jwt.utils';
 import appRegistry from '../app.registry';
 import appBroker from '../app.broker';
+import transporter from '../app.transporter';
 
 class BaseController {
   model: Model<any>;
@@ -20,6 +21,7 @@ class BaseController {
   _: typeof _;
   broker: typeof appBroker;
   listeners?(): void;
+  transporter: typeof transporter;
 
   constructor(model: Model<any>) {
     this.model = model;
@@ -32,6 +34,7 @@ class BaseController {
     };
     this._ = _;
     this.broker = appBroker;
+    this.transporter = transporter;
 
     if (typeof this.listeners === 'function') this.listeners();
   }
