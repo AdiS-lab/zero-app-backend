@@ -10,4 +10,4 @@ Content-Type: application/json
 }
 
 ### list users
-GET {{baseUrl}}/api/v1/users
+GET {{baseUrl}}/api/v1/users?page=1&limit=2&email=test@test.com

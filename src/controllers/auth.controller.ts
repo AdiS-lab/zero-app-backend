@@ -11,45 +11,50 @@ class AuthController extends BaseController {
 
   async login(req: Request, res: Response) {
     const { email, password } = req.body;
+    try {
+      if (!email || !password)
+        throw new this.AppError('Email or password not provided', 400);
 
-    if (!email || !password)
-      return res
-        .status(400)
-        .json({ message: 'Email or password not provided' });
+      const user = await User.findOne({ email });
+      if (!user) throw new this.AppError('User not found', 404);
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'User not found' });
+      const isMatch = await argon2.verify(user.password, password);
+      if (!isMatch) throw new this.AppError('Password does not match', 401);
 
-    const isMatch = await argon2.verify(user.password, password);
-    if (!isMatch) return res.status(401).json('Password does not match');
-
-    const tokens = await this.jwt.createTokens({
-      _id: user._id.toString(),
-      email: user.email,
-    });
-
-    const tokenExists = await this.model.findOne({ userId: user._id });
-
-    if (!tokenExists) {
-      const authToken = new this.model({
-        userId: user._id,
-        refreshToken: tokens.refreshToken,
+      const tokens = await this.jwt.createTokens({
+        _id: user._id.toString(),
+        email: user.email,
       });
-      await authToken.save();
-    } else {
-      await this.model.findOneAndUpdate(
-        {
-          userId: user._id,
-        },
-        {
-          refreshToken: tokens.refreshToken,
-        }
-      );
-    }
 
-    return res
-      .status(200)
-      .json({ message: 'Successfully logged in user', ...tokens });
+      const tokenExists = await this.model.findOne({ userId: user._id });
+
+      if (!tokenExists) {
+        const authToken = new this.model({
+          userId: user._id,
+          refreshToken: tokens.refreshToken,
+        });
+        await authToken.save();
+      } else {
+        await this.model.findOneAndUpdate(
+          {
+            userId: user._id,
+          },
+          {
+            refreshToken: tokens.refreshToken,
+          }
+        );
+      }
+
+      return res
+        .status(200)
+        .json({ message: 'Successfully logged in user', ...tokens });
+    } catch (e: unknown) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
+      }
+      this.logger.error('authController.login = ', e);
+      return res.status(500).json({ message: 'Internal servor error' });
+    }
   }
 
   /**
@@ -58,16 +63,16 @@ class AuthController extends BaseController {
    * @param res
    * @returns {Object} -> { accessToken: string, refreshToken: string , message: 'User successfully created' }
    */
+
   async signup(req: Request, res: Response) {
     const { email, password } = req.body;
     if (!email || !password) {
-      throw new Error('Email or password not provided');
+      throw new this.AppError('Email or password not provided', 400);
     }
     const user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: 'User already exists' });
+    if (user) throw new this.AppError('User already exists', 400);
 
     try {
-      // const hashedPassword = await this.hashStrategy.hash(password);
       const userModel = this.registry.get('user.model');
 
       const newUser = new userModel({ email, password });
@@ -85,7 +90,6 @@ class AuthController extends BaseController {
         userId: savedUser._id,
         refreshToken: refreshToken,
       });
-
       await authToken.save();
 
       // send email to verify email address
@@ -95,25 +99,12 @@ class AuthController extends BaseController {
         accessToken,
         refreshToken,
       });
-
-      // const createdUser = await User.create({
-      //   email,
-      //   password: hashedPassword,
-      // });
-      // return res
-      //   .status(201)
-      //   .json({ createdUser, message: 'User successfully created' });
-    } catch (error: any) {
-      if (error.message === 'Email or password not provided') {
-        res.status(400).json({
-          e: error.message,
-          message: 'Email or password not provided',
-        });
+    } catch (e: unknown) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
       }
-
-      return res
-        .status(500)
-        .json({ e: error.message, message: 'Unsuccessful creation' });
+      this.logger.error('authController.signup = ', e);
+      return res.status(500).json({ message: 'Internal server error' });
     }
   }
 
@@ -129,50 +120,45 @@ class AuthController extends BaseController {
       const userModel = this.registry.get('user.model');
       const user = await userModel.findById(userId);
 
-      if (!user) throw new Error('User not found');
+      if (!user) throw new this.AppError('User not found', 404);
 
       const pickedUser = this._.pick(user, ['_id', 'email', 'verified']);
 
       return res.status(200).json({ user: pickedUser });
-    } catch (error: unknown) {
-      this.logger.error('authController.me: =', error);
+    } catch (e: unknown) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
+      }
+      this.logger.error('authController.me: =', e);
       res.status(500).json({ message: 'Internal server error' });
     }
   }
 
-  // async refresh(req: Request, res: Response) {
-  //   try {
-  //     const originalToken = req.body?.refresh_token;
-  //     const { id, email } = (await validateRefreshToken(originalToken)) as {
-  //       id: string;
-  //       email: string;
-  //     };
+  async subscribe(req: Request, res: Response) {
+    const userId = req.meta?.user?._id;
+    const subscriptionObject = req.body;
 
-  //     const { refreshToken, accessToken } = await createTokens(id, email);
-  //     await Auth.findByIdAndUpdate(id, { refreshToken });
-  //     return { refreshToken, accessToken };
-  //   } catch (error: any) {
-  //     return res
-  //       .status(400)
-  //       .json({ e: error.message, message: 'Rehydration has a problem' });
-  //   }
-  // }
-  // async forgotPassword(req: Request, res: Response) {
-  //   const { email, password } = req.body;
-  //   const user = await User.findOne({ email });
-  //   if (!user) return res.status(404).json({ message: 'User not found' });
+    try {
+      const result = await this.model.findOneAndUpdate(
+        { userId },
+        { subscriptionObject }
+      );
+      if (!result) throw new this.AppError('Unable to find user', 404);
 
-  //   const hashedPassword = await argon2.hash(password);
-  //   await User.findByIdAndUpdate(user.id, { password: hashedPassword });
-  //   return res.status(200).json({ message: 'Updated password' });
-  // }
+      await this.notification.sendPush(subscriptionObject, {
+        title: 'TESTING',
+        message: 'this is a test hopefully it works!',
+      });
 
-  // async verifyEmail(req: Request, res: Response) {
-  //   const email = req.body;
-  //   const user = await User.findOne({ email });
-  //   if (!user) return res.status(404).json({ message: 'User not found' });
-  //   return res.status(200).json({ message: user });
-  // }
+      res.status(200).json({ message: 'Successfully subscribed' });
+    } catch (e) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
+      }
+      this.logger.error('authController.subscribe = ', e);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
 }
 
 const authController = new AuthController();

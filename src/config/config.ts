@@ -13,6 +13,8 @@ interface IConfig {
   refreshTokenTtl: SignOptions['expiresIn'];
   email: string;
   password: string;
+  vapidPublicKey: string;
+  vapidSecretKey: string;
 }
 
 const config = {
@@ -25,6 +27,8 @@ const config = {
   refreshTokenTtl: process.env.REFRESH_TOKEN_TTL || undefined,
   email: process.env.EMAIL || '',
   password: process.env.PASSWORD || '',
+  vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
+  vapidSecretKey: process.env.VAPID_SECRET_KEY,
 };
 
 export default config as IConfig;

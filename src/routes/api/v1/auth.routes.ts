@@ -21,6 +21,10 @@ router
   .route('/logout')
   .post(validateTokenMiddleware, authController.logout.bind(authController));
 
+router
+  .route('/subscribe')
+  .post(validateTokenMiddleware, authController.subscribe.bind(authController));
+
 // router
 //   .route('/forgot-password')
 //   .post(authController.forgotPassword.bind(authController));

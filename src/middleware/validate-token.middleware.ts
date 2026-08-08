@@ -1,6 +1,7 @@
 import jwtUtils from '../utils/jwt.utils';
 import type { Request, Response } from 'express';
-// import logger from '../logs/logger';
+import AppError from '../utils/error-handler';
+import logger from '../logs/logger';
 
 const validateTokenMiddleware = async (
   req: Request,
@@ -8,23 +9,21 @@ const validateTokenMiddleware = async (
   next: () => void
 ) => {
   const accessToken = req.headers.authorization?.split(' ')[1];
-  if (!accessToken)
-    return res.status(400).json({ message: 'No access token provided' });
+
   try {
+    if (!accessToken) throw new AppError('No access token provided', 400);
     const decoded = await jwtUtils.verifyAccessToken(accessToken);
     req.meta = {
       user: decoded,
     };
-    // req.id = decoded._id;
-    // const { id } = (await jwtUtils.verifyAccessToken(accessToken)) as {
-    //   id: string;
-    // };
-    // req.id = id;
+
     next();
-  } catch (error: any) {
-    return res
-      .status(401)
-      .json({ e: error.message, message: 'Invalid access token' });
+  } catch (e: any) {
+    if (e instanceof AppError) {
+      return res.status(e.statusCode).json({ message: e.message });
+    }
+    logger.error(e);
+    return res.status(401).json({ message: 'Invalid access token' });
   }
 };
 

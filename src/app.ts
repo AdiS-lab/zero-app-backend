@@ -5,6 +5,8 @@ import cors from 'cors';
 import router from './app.router';
 import registry from './app.registry';
 import logger from './logs/logger';
+import config from './config/config';
+import webpush from 'web-push';
 
 import { User, Auth } from './models';
 
@@ -44,13 +46,21 @@ app.use(
   )
 );
 
+logger.info('morgan initialized');
+
 registry.register('user.model', User);
 registry.register('auth.model', Auth);
+
+webpush.setVapidDetails(
+  'mailto: test@test.com',
+  config.vapidPublicKey,
+  config.vapidSecretKey
+);
+
+logger.info('webpush and registry initialized');
 
 app.get('/ping', function (req, res) {
   res.send('pong');
 });
-
-logger.info('testing winston respond');
 
 export default app;
