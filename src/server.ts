@@ -20,26 +20,6 @@ dbConnection(config.mongoUri)
       },
     });
 
-    io.on('connection', (socket) => {
-      logger.info(`user connected`);
-
-      socket.on('disconnect', () => {
-        logger.info('user disconnected');
-      });
-
-      socket.on('online', () => {
-        logger.info('A new user has joined the chat');
-        io.sockets.emit('joined', {
-          success: true,
-        });
-      });
-
-      socket.on('chat message', (msg) => {
-        logger.info('message: ', msg);
-        io.sockets.emit('chat', msg);
-      });
-    });
-
     server.listen(config.port, function () {
       logger.info('Server is running on port: ', config.port, 'hello world');
     });

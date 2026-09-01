@@ -8,7 +8,7 @@ import jwtUtils from '../utils/jwt.utils';
 import AppError from '../utils/error-handler';
 import appRegistry from '../app.registry';
 import appBroker from '../app.broker';
-import appNotifications from '../app.notifications';
+import { appNotifications } from '../app.notifications';
 
 class BaseController {
   model: Model<any>;
@@ -110,9 +110,12 @@ class BaseController {
   async update(req: Request, res: Response) {
     try {
       res.send('NOT IMPLEMENTED');
-    } catch (error) {
-      this.logger.error('Error:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+    } catch (e) {
+      this.logger.error('Error:', e);
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e });
+      }
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
   async delete(req: Request, res: Response) {

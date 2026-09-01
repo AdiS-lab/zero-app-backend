@@ -1,7 +1,7 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import config from '../config/config';
 
-interface ITokenPayload {
+export interface ITokenPayload {
   _id: string;
   email: string;
 }

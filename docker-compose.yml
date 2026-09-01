@@ -19,9 +19,17 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: passpass
     ports:
       - 8081:8081
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    restart: always
 
 networks:
   internal:
 
 volumes:
   data:
+  redis_data:

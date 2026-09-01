@@ -6,8 +6,6 @@ import validateTokenMiddleware from '../../../middleware/validate-token.middlewa
 
 const router = Router();
 
-router.use(validateTokenMiddleware);
-
 router
   .route('/')
   .get(chatsController.list.bind(chatsController))
@@ -15,7 +13,7 @@ router
 
 router
   .route('/:_id')
-  .get(chatsController.getById.bind(chatsController))
+  .get(validateTokenMiddleware, chatsController.getById.bind(chatsController))
   .put(validateTokenMiddleware, chatsController.update.bind(chatsController))
   .delete(
     validateTokenMiddleware,

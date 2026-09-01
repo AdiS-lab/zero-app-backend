@@ -7,6 +7,9 @@ import registry from './app.registry';
 import logger from './logs/logger';
 import config from './config/config';
 import webpush from 'web-push';
+import EmailsController from './controllers/emails.controller';
+import { emailWorker, emailQueue } from './app.notifications';
+import cookieParser from 'cookie-parser';
 
 import { User, Auth } from './models';
 
@@ -24,6 +27,8 @@ app.use(
 
 // routes
 app.use(router);
+
+app.use(cookieParser());
 
 app.use(
   morgan(
@@ -50,6 +55,9 @@ logger.info('morgan initialized');
 
 registry.register('user.model', User);
 registry.register('auth.model', Auth);
+registry.register('emails.controller', EmailsController);
+registry.register('email.worker', emailWorker);
+registry.register('email.queue', emailQueue);
 
 webpush.setVapidDetails(
   'mailto: test@test.com',

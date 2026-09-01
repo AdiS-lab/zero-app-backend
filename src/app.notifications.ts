@@ -1,9 +1,9 @@
 import webpush from 'web-push';
 import nodemailer from 'nodemailer';
 import config from './config/config';
+import { Queue, Worker } from 'bullmq';
 import type {
   PushSubscriptionObject,
-  EmailBody,
   PushBody,
 } from './types/notifications.ts';
 
@@ -12,8 +12,12 @@ class AppNotifications {
     const payload = JSON.stringify(message);
     webpush.sendNotification(sub, payload, { TTL: 60 });
   }
+}
+export const appNotifications = new AppNotifications();
 
-  async sendEmail(message: EmailBody) {
+export const emailWorker = new Worker(
+  'emailQueue',
+  async (message) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -21,11 +25,14 @@ class AppNotifications {
         pass: config.password,
       },
     });
-
-    transporter.sendMail({ from: config.email, ...message });
+    transporter.sendMail({ from: config.email, ...message.data });
+  },
+  {
+    connection: { host: 'localhost', port: 6379 },
+    limiter: { max: 100, duration: 60000 }, // Limit to 100 emails per minute
   }
-}
+);
 
-const appNotifications = new AppNotifications();
-
-export default appNotifications;
+export const emailQueue = new Queue('emailQueue', {
+  connection: { host: 'localhost', port: 6379 },
+});

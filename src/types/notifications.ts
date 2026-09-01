@@ -1,7 +1,8 @@
 export interface EmailBody {
   to: string;
   subject: string;
-  body: string;
+  text: string;
+  html?: string;
 }
 
 export interface PushSubscriptionObject {

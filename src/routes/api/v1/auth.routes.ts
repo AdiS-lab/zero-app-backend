@@ -5,10 +5,6 @@ import validateTokenMiddleware from '../../../middleware/validate-token.middlewa
 
 const router = Router();
 
-// router
-//   .route('/refresh')
-//   .put(validateTokenMiddleware, authController.refresh.bind(authController));
-
 router.route('/signup').post(authController.signup.bind(authController));
 
 router.route('/login').post(authController.login.bind(authController));
@@ -25,12 +21,16 @@ router
   .route('/subscribe')
   .post(validateTokenMiddleware, authController.subscribe.bind(authController));
 
-// router
-//   .route('/forgot-password')
-//   .post(authController.forgotPassword.bind(authController));
+router
+  .route('/verify-email')
+  .post(authController.verifyEmail.bind(authController));
 
-// router
-//   .route('/verify-email')
-// .post(authController.verifyEmail.bind(authController));
+router
+  .route('/forgot-password')
+  .post(authController.forgotPassword.bind(authController));
+
+router
+  .route('/update-password')
+  .post(authController.updatePassword.bind(authController));
 
 export default router;

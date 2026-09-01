@@ -18,5 +18,8 @@ router
   .get(chatroomsController.getById.bind(chatroomsController))
   .put(chatroomsController.update.bind(chatroomsController))
   .delete(chatroomsController.delete.bind(chatroomsController));
+router
+  .route('/create')
+  .post(chatroomsController.createRoom.bind(chatroomsController));
 
 export default router;

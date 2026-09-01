@@ -11,7 +11,7 @@ const validateTokenMiddleware = async (
   const accessToken = req.headers.authorization?.split(' ')[1];
 
   try {
-    if (!accessToken) throw new AppError('No access token provided', 400);
+    if (!accessToken) throw new AppError('No access token provided', 401);
     const decoded = await jwtUtils.verifyAccessToken(accessToken);
     req.meta = {
       user: decoded,

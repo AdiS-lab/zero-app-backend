@@ -1,9 +1,9 @@
 import argon2 from 'argon2';
 
 import BaseController from './base.controller';
-// import { createTokens, validateRefreshToken } from '../utils/jwt.utils';
 import { Request, Response } from 'express';
 import { Auth, User } from '../models';
+import { ITokenPayload } from '../utils/jwt.utils';
 class AuthController extends BaseController {
   constructor() {
     super(Auth);
@@ -92,7 +92,12 @@ class AuthController extends BaseController {
       });
       await authToken.save();
 
-      // send email to verify email address
+      this.broker.emit('auth:signup', {
+        email: savedUser.email,
+        subject: 'Thanks for signing up!',
+        text: 'Click the button below to verify your email',
+        _id: savedUser._id.toString(),
+      });
 
       return res.status(201).json({
         message: 'User successfully created',
@@ -144,18 +149,97 @@ class AuthController extends BaseController {
         { subscriptionObject }
       );
       if (!result) throw new this.AppError('Unable to find user', 404);
-
-      await this.notification.sendPush(subscriptionObject, {
-        title: 'TESTING',
-        message: 'this is a test hopefully it works!',
-      });
-
+      /**
+       * send email in queue
+       */
       res.status(200).json({ message: 'Successfully subscribed' });
     } catch (e) {
       if (e instanceof this.AppError) {
         return res.status(e.statusCode).json({ message: e.message });
       }
       this.logger.error('authController.subscribe = ', e);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async verifyEmail(req: Request, res: Response) {
+    const { accessToken } = req?.body as { accessToken: string };
+
+    if (!accessToken)
+      throw new this.AppError('No access token found in params', 400);
+    try {
+      const payload: ITokenPayload =
+        await this.jwt.verifyAccessToken(accessToken);
+
+      await User.findOneAndUpdate({ _id: payload._id }, { verified: true });
+
+      res.status(200).json({ message: 'Successfully Verified!' });
+    } catch (e: unknown) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
+      }
+
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async updatePassword(req: Request, res: Response) {
+    const passwordInfo = req?.body;
+
+    if (!passwordInfo) throw new this.AppError('password or id missing ', 400);
+    const { newPassword, token } = passwordInfo;
+    try {
+      const payload = await this.jwt.verifyAccessToken(token);
+
+      await User.findOneAndUpdate(
+        {
+          _id: payload._id,
+        },
+        {
+          password: newPassword,
+        }
+      );
+
+      this.logger.info('successfully updated user!');
+      return res.status(200).json({ message: 'successfully updated password' });
+    } catch (e) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
+      }
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  async forgotPassword(req: Request, res: Response) {
+    const emailInfo = req?.body;
+
+    if (!emailInfo)
+      throw new this.AppError('email not included in request', 400);
+
+    const { email } = emailInfo;
+
+    try {
+      const user = await User.findOne({ email });
+      if (!user)
+        throw new this.AppError(
+          'no user currently exists with this email',
+          400
+        );
+
+      const { _id } = user;
+
+      this.broker.emit('auth:password-reset', {
+        email,
+        subject: 'ZERO => Reset your password',
+        text: 'Click the link below to reset your password',
+        _id,
+      });
+
+      return res.status(200).json({ message: 'emitted reset password event' });
+    } catch (e) {
+      if (e instanceof this.AppError) {
+        return res.status(e.statusCode).json({ message: e.message });
+      }
       return res.status(500).json({ message: 'Internal server error' });
     }
   }

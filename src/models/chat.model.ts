@@ -25,7 +25,6 @@ const messageSchema = new Schema<IMessage>({
 });
 
 interface IChat extends Document {
-  // userId: Types.ObjectId;
   chatroomId: Types.ObjectId;
   messages: (typeof messageSchema)[];
 }
