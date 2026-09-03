@@ -135,7 +135,7 @@ class AuthController extends BaseController {
         return res.status(e.statusCode).json({ message: e.message });
       }
       this.logger.error('authController.me: =', e);
-      res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ message: 'Internal server error' });
     }
   }
 
@@ -163,7 +163,7 @@ class AuthController extends BaseController {
   }
 
   async verifyEmail(req: Request, res: Response) {
-    const { accessToken } = req?.body as { accessToken: string };
+    const { token: accessToken } = req.params as { token: string };
 
     if (!accessToken)
       throw new this.AppError('No access token found in params', 400);
@@ -173,7 +173,7 @@ class AuthController extends BaseController {
 
       await User.findOneAndUpdate({ _id: payload._id }, { verified: true });
 
-      res.status(200).json({ message: 'Successfully Verified!' });
+      res.redirect('http://localhost:5173/chatroom');
     } catch (e: unknown) {
       if (e instanceof this.AppError) {
         return res.status(e.statusCode).json({ message: e.message });

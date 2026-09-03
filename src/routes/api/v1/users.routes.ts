@@ -13,11 +13,13 @@ router
 
 router
   .route('/:_id')
-  .get(usersController.getById.bind(usersController))
   .put(validateTokenMiddleware, usersController.update.bind(usersController))
   .delete(
     validateTokenMiddleware,
     usersController.delete.bind(usersController)
   );
 
+router
+  .route('/any-user')
+  .post(usersController.getUserByEmail.bind(usersController));
 export default router;

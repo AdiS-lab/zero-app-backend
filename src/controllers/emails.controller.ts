@@ -13,7 +13,7 @@ class EmailsController extends BaseController {
       const html = `
         <div>
           <p>Click the link below</p>
-          <a href="http://localhost:5173/verify/${accessToken}">Verify Email</a>
+          <a href="http://localhost:8000/api/v1/auth/verify-email/${accessToken}">Verify Email</a>
         </div>
       `;
 

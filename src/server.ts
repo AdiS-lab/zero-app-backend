@@ -20,6 +20,15 @@ dbConnection(config.mongoUri)
       },
     });
 
+    io.on('connection', (socket) => {
+      logger.info('connected', socket.id);
+
+      socket.on('chat-message', (data) => {
+        logger.info('message sent was', data);
+        io.emit('message-sent', data);
+      });
+    });
+
     server.listen(config.port, function () {
       logger.info('Server is running on port: ', config.port, 'hello world');
     });

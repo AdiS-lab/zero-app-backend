@@ -107,6 +107,7 @@ class BaseController {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
+
   async update(req: Request, res: Response) {
     try {
       res.send('NOT IMPLEMENTED');

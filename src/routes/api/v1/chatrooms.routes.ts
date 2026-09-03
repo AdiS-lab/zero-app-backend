@@ -1,17 +1,13 @@
 import { Router } from 'express';
 
 import { chatroomsController } from '../../../controllers';
-
-// import validateTokenMiddleware from '../../../middleware/validate-token.middleware';
+import validateTokenMiddleware from '../../../middleware/validate-token.middleware';
 
 const router = Router();
 
 // router.use(validateTokenMiddleware);
 
-router
-  .route('/')
-  .get(chatroomsController.list.bind(chatroomsController))
-  .post(chatroomsController.createRoom.bind(chatroomsController));
+router.route('/').get(chatroomsController.list.bind(chatroomsController));
 
 router
   .route('/:_id')
@@ -21,5 +17,12 @@ router
 router
   .route('/create')
   .post(chatroomsController.createRoom.bind(chatroomsController));
+
+router
+  .route('/me')
+  .get(
+    validateTokenMiddleware,
+    chatroomsController.me.bind(chatroomsController)
+  );
 
 export default router;

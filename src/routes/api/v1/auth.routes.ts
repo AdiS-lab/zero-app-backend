@@ -22,8 +22,8 @@ router
   .post(validateTokenMiddleware, authController.subscribe.bind(authController));
 
 router
-  .route('/verify-email')
-  .post(authController.verifyEmail.bind(authController));
+  .route('/verify-email/:token')
+  .get(authController.verifyEmail.bind(authController));
 
 router
   .route('/forgot-password')
