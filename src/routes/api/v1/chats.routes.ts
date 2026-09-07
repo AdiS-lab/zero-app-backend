@@ -12,6 +12,17 @@ router
   .post(chatsController.create.bind(chatsController));
 
 router
+  .route('/add-message')
+  .post(
+    validateTokenMiddleware,
+    chatsController.addMessage.bind(chatsController)
+  );
+
+router
+  .route('/:chatroomId')
+  .get(chatsController.getMessagesById.bind(chatsController));
+
+router
   .route('/:_id')
   .get(validateTokenMiddleware, chatsController.getById.bind(chatsController))
   .put(validateTokenMiddleware, chatsController.update.bind(chatsController))

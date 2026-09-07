@@ -127,7 +127,14 @@ class AuthController extends BaseController {
 
       if (!user) throw new this.AppError('User not found', 404);
 
-      const pickedUser = this._.pick(user, ['_id', 'email', 'verified']);
+      const pickedUser = this._.pick(user, [
+        '_id',
+        'email',
+        'verified',
+        'avatar',
+      ]);
+
+      this.logger.debug(JSON.stringify(user));
 
       return res.status(200).json({ user: pickedUser });
     } catch (e: unknown) {

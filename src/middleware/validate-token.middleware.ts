@@ -17,6 +17,8 @@ const validateTokenMiddleware = async (
       user: decoded,
     };
 
+    logger.debug('succesfully validated user');
+
     next();
   } catch (e: any) {
     if (e instanceof AppError) {

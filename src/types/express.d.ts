@@ -7,5 +7,9 @@ declare namespace Express {
         email: string;
       };
     };
+    file?: {
+      buffer: Buffer;
+      mimetype: string;
+    };
   }
 }

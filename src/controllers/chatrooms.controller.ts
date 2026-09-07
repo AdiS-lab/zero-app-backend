@@ -31,6 +31,9 @@ class ChatroomsController extends BaseController {
 
   async me(req: Request, res: Response) {
     const userId = req.meta?.user?._id;
+
+    this.logger.debug('controllers: chatrooms: my-rooms: successfully hit');
+
     try {
       const rooms = await this.model
         .find({ participants: userId })
