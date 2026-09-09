@@ -4,6 +4,7 @@ import BaseController from './base.controller';
 import { Request, Response } from 'express';
 import { Auth, User } from '../models';
 import { ITokenPayload } from '../utils/jwt.utils';
+import generateDefaultAvatar from '../utils/generate-default-avatar';
 class AuthController extends BaseController {
   constructor() {
     super(Auth);
@@ -75,7 +76,9 @@ class AuthController extends BaseController {
     try {
       const userModel = this.registry.get('user.model');
 
-      const newUser = new userModel({ email, password });
+      const avatar = generateDefaultAvatar(email);
+
+      const newUser = new userModel({ email, password, avatar });
 
       const savedUser = await newUser.save();
 

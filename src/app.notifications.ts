@@ -7,6 +7,7 @@ import type {
   PushBody,
 } from './types/notifications.ts';
 
+const redisHost = config.appMode == 'DEV' ? 'localhost' : 'redis';
 class AppNotifications {
   async sendPush(sub: PushSubscriptionObject, message: PushBody) {
     const payload = JSON.stringify(message);
@@ -28,11 +29,11 @@ export const emailWorker = new Worker(
     transporter.sendMail({ from: config.email, ...message.data });
   },
   {
-    connection: { host: 'localhost', port: 6379 },
+    connection: { host: redisHost, port: 6379 },
     limiter: { max: 100, duration: 60000 }, // Limit to 100 emails per minute
   }
 );
 
 export const emailQueue = new Queue('emailQueue', {
-  connection: { host: 'localhost', port: 6379 },
+  connection: { host: redisHost, port: 6379 },
 });

@@ -27,6 +27,11 @@ class ChatsController extends BaseController {
 
     const { chatroomId, message } = msgPayload;
 
+    /**
+     * remove default mediaUrl's / mediaType
+     * for future messages sent
+     */
+
     try {
       if (!chatroomId || !message || !userId)
         throw new this.AppError('no id or message provided', 400);
@@ -64,7 +69,9 @@ class ChatsController extends BaseController {
     const chatroomId = req.params;
     try {
       if (!chatroomId) throw new this.AppError('no chatroom id provided', 400);
-      const messageList = await this.model.findOne(chatroomId);
+      const messageList = await this.model
+        .findOne(chatroomId)
+        .populate('messages.chatter', 'avatar email');
       return res
         .status(200)
         .json({ message: 'successfully retrieved messages', messageList });
