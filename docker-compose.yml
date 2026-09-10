@@ -1,14 +1,14 @@
 services:
   backend:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
-    env_file: 
+    env_file:
       - .env
-    ports: 
+    ports:
       - '8000:8000'
-    depends_on: 
-      - mongo 
+    depends_on:
+      - mongo
       - redis
     networks:
       - internal
@@ -39,6 +39,8 @@ services:
     volumes:
       - redis_data:/data
     restart: always
+    networks:
+      - internal
 
 networks:
   internal:
