@@ -11,3 +11,19 @@ jobs:
     steps:
       - name: TestAction
         run: echo "What's Up Phil"
+
+      - name: Create env file
+        run: |
+          echo ${{ secrets.APP_MODE }} >> .env
+          echo ${{ secrets.PORT }} >> .env
+          echo ${{ secrets.REFRESH_TOKEN_TTL }} >> .env
+          echo ${{ secrets.REFRESH_TOKEN_SECRET }} >> .env
+          echo ${{ secrets.ACCESS_TOKEN_TTL }} >> .env
+          echo ${{ secrets.ACCESS_TOKEN_SECRET }} >> .env
+          echo ${{ secrets.EMAIL }} >> .env
+          echo ${{ secrets.PASSWORD }} >> .env
+          echo ${{ secrets.PROD_MONGO_URI }} >> .env
+          echo ${{ secrets.VAPID_SECRET_KEY }} >> .env
+          echo ${{ secrets.VAPID_PUBLIC_KEY }} >> .env
+          cat .env
+
