@@ -6,8 +6,10 @@ import type {
   PushSubscriptionObject,
   PushBody,
 } from './types/notifications.ts';
+import logger from './logs/logger';
 
 const redisHost = config.appMode == 'DEV' ? 'localhost' : 'redis';
+logger.info('this is redishost: ', JSON.stringify(redisHost));
 class AppNotifications {
   async sendPush(sub: PushSubscriptionObject, message: PushBody) {
     const payload = JSON.stringify(message);

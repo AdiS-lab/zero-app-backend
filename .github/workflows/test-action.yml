@@ -1,0 +1,13 @@
+name: TestAction
+on:
+  push:
+    branches: -main
+      -release
+
+jobs:
+  build:
+    name: TestAction
+    runs-on: ubuntu-latest
+    steps:
+      - name: TestAction
+        run: echo "What's Up Phil"
