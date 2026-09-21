@@ -26,4 +26,14 @@ jobs:
           echo "VAPID_SECRET_KEY=${{ secrets.VAPID_SECRET_KEY }}" >> .env
           echo "VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}" >> .env
           cat .env
+    
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd zero-app-backend
+            sudo bash deploy.sh
 
