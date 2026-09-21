@@ -14,7 +14,7 @@ jobs:
 
       - name: Create env file
         run: |
-          echo ${{ secrets.APP_MODE }} >> .env
+          echo "APP_MODE=${{ secrets.APP_MODE }}" >> .env
           echo ${{ secrets.PORT }} >> .env
           echo ${{ secrets.REFRESH_TOKEN_TTL }} >> .env
           echo ${{ secrets.REFRESH_TOKEN_SECRET }} >> .env
