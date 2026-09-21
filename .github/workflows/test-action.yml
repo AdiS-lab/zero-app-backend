@@ -1,8 +1,8 @@
 name: TestAction
 on:
   push:
-    branches: -main
-      -release
+    branches:
+      - main
 
 jobs:
   build:
