@@ -32,6 +32,8 @@ server.on('SIGINT', () => {
   });
 });
 
+logger.info('test');
+
 dbConnection(config.mongoUri)
   .then(() => {
     logger.debug('mongo connected');
