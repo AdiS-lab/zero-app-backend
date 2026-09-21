@@ -68,7 +68,7 @@ webpush.setVapidDetails(
 logger.info('webpush and registry initialized');
 
 app.get('/ping', function (req, res) {
-  res.send('pong');
+  res.send('test action');
 });
 
 export default app;
