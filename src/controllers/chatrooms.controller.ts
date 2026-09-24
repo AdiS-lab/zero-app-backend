@@ -9,9 +9,23 @@ class ChatroomsController extends BaseController {
   }
 
   async createRoom(req: Request, res: Response) {
+    const { chatter, chatees } = req.body;
+
+    this.logger.debug(`group before creating room: ${JSON.stringify(chatees)}`);
+
+    this.logger.debug(
+      `chatee before creating room: ${JSON.stringify(chatees[0])}`
+    );
+
     try {
-      const { chatter, chattee } = req.body;
-      const newChatroom = new this.model({ chatter, chattee });
+      if (chatees.length == 0)
+        throw new this.AppError('no people provided', 400);
+
+      const newChatroom =
+        chatees.length === 2
+          ? new this.model({ chatter, chattee: chatees[0] })
+          : new this.model({ chatter, participants: chatees });
+
       const savedChatroom = await newChatroom.save();
       this.broker.emit('chatroom:created', savedChatroom.toObject());
 
@@ -24,7 +38,6 @@ class ChatroomsController extends BaseController {
       if (e instanceof this.AppError) {
         return res.status(e.statusCode).json({ message: e.message });
       }
-      this.logger.error('chatroomController.createRoom =  ', e);
       return res.status(500).json({ message: 'Internal servor error' });
     }
   }
@@ -32,7 +45,7 @@ class ChatroomsController extends BaseController {
   async me(req: Request, res: Response) {
     const userId = req.meta?.user?._id;
 
-    this.logger.debug('controllers: chatrooms: my-rooms: successfully hit');
+    this.logger.debug('========== RETRIEVING ROOMS =======');
 
     try {
       const rooms = await this.model
@@ -44,12 +57,29 @@ class ChatroomsController extends BaseController {
         .status(200)
         .json({ message: 'all your rooms are retrieved!', rooms });
     } catch (e) {
-      this.logger.error('Error creating chatroom:', e);
+      this.logger.error('Error finding user in chatroom:', e);
       if (e instanceof this.AppError) {
         return res.status(e.statusCode).json({ message: e.message });
       }
-      this.logger.error('authController.login = ', e);
       return res.status(500).json({ message: 'Internal servor error' });
+    }
+  }
+
+  async hasAccess(userId: string, chatroomId: string): Promise<boolean> {
+    try {
+      this.logger.debug('========= CHECKING ACCESS ==============');
+
+      const room = await this.model
+        .findOne({
+          _id: chatroomId,
+          participants: userId,
+        })
+        .lean();
+
+      return !!room;
+    } catch (e) {
+      this.logger.error('Error checking chatroom access:', e);
+      return false;
     }
   }
 }

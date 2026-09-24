@@ -11,7 +11,7 @@ import initializeSocket from './utils/socket-handler';
 logger.debug(JSON.stringify(config));
 
 const server = createServer(app);
-export const io = new Server(server, {
+const io = new Server(server, {
   cors: {
     origin: 'http://localhost:5173',
     credentials: true,

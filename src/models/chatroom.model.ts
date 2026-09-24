@@ -18,7 +18,7 @@ const chatroomSchema = new Schema<IChatroom>(
 );
 
 chatroomSchema.pre('save', async function () {
-  // if (!this.isModified('participants')) return;
+  if (this.isNew && this.participants.length !== 0) return;
   this.participants = [this.chatter, this.chattee];
 });
 
