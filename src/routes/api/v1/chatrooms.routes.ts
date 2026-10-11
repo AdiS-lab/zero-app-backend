@@ -24,4 +24,11 @@ router
   .route('/create')
   .post(chatroomsController.createRoom.bind(chatroomsController));
 
+router
+  .route('/add-to-room')
+  .post(
+    validateTokenMiddleware,
+    chatroomsController.addToRoom.bind(chatroomsController)
+  );
+
 export default router;

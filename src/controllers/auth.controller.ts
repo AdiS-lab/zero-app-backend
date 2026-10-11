@@ -66,6 +66,7 @@ class AuthController extends BaseController {
    */
 
   async signup(req: Request, res: Response) {
+    this.logger.debug('========= SIGNING UP... =========');
     const { email, password } = req.body;
     if (!email || !password) {
       throw new this.AppError('Email or password not provided', 400);
