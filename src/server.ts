@@ -13,7 +13,7 @@ logger.debug(JSON.stringify(config));
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: 'http://localhost:5173',
     credentials: true,
   },
 });
