@@ -15,6 +15,7 @@ interface IConfig {
   password: string;
   vapidPublicKey: string;
   vapidSecretKey: string;
+  clientURL: string;
 }
 
 const config = {
@@ -29,6 +30,10 @@ const config = {
   password: process.env.PASSWORD || '',
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
   vapidSecretKey: process.env.VAPID_SECRET_KEY,
+  clientURL:
+    process.env.APP_MODE == 'DEV'
+      ? 'http://localhost:5173'
+      : process.env.CLIENT_URL,
 };
 
 export default config as IConfig;

@@ -13,7 +13,7 @@ logger.debug(JSON.stringify(config));
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: config.clientURL,
     credentials: true,
   },
 });
@@ -21,7 +21,7 @@ const io = new Server(server, {
 initializeSocket(io);
 
 server.listen(config.port, function () {
-  logger.info('Server is running on port: ', config.port, 'hello world');
+  logger.info('Server is running on port: ', config.port, 'hello world!');
 });
 
 server.on('SIGINT', () => {
